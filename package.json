@@ -10,7 +10,9 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@vue/eslint-config-airbnb": "^4.0.0",
     "core-js": "^2.6.5",
+    "tone": "^13.4.9",
     "vue": "^2.6.6"
   },
   "devDependencies": {
