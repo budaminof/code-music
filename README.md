@@ -1,5 +1,5 @@
 # code-to-music
-
+Ryan and I create some software that will make your code into music with Tone.js
 ## Project setup
 ```
 npm install
