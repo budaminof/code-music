@@ -25,7 +25,7 @@ const synth = new Tone.MembraneSynth().toMaster();
 let synthPart;
 let notes = [];
 let charsToPlay = [];
-const sampleCode = `R  eactDOM.render(
+const sampleCode = `ReactDOM.render(
   <h1> {♪} Hello world! </h1>,
   document.getElementById('root')
 );`;
