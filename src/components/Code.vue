@@ -1,16 +1,21 @@
-
 <template>
   <div>
     <textarea v-model="code" v-if="!isPlaying"/>
-    <div v-if="isPlaying" class="real-time-notes">{{realTimeNotes}}</div>
+
+    <div v-if="isPlaying">
+      <div class="real-time-notes" v-for="(line, index) in realTimeChar" :key="index">{{line}}</div>
+      <button @click="onStartOverClick">start over</button>
+    </div>
+
     <div class="convert-button-wrapper">
-      <button @click="convertCode" v-if="!isPlaying">make music</button>
+      <button @click="onPlayClick" v-if="!isPlaying">make music</button>
     </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-control-regex */
+/* eslint-disable no-unused-expressions */
 import Tone from 'tone';
 import notesMap from '../utility/notesMap';
 
@@ -19,34 +24,55 @@ const sampleCode = `ReactDOM.render(
   <h1>Hello world!</h1>,
   document.getElementById('root')
 );`;
+
 export default {
   data() {
     return {
       code: sampleCode,
       isPlaying: false,
-      realTimeNotes: '',
+      realTimeChar: [''],
+      notes: [],
+      charsToPlay: [],
     };
   },
   methods: {
-    convertCode() {
+    async onPlayClick() {
       this.isPlaying = true;
-      const notes = [];
-      const linesOfCode = this.code.split(/\r\n|\n|\r/);
+      await this.convertCode();
+      this.playMusic(this.notes, this.charsToPlay);
+    },
+    convertCode() {
+      return new Promise((resolve) => {
+        const linesOfCode = this.code.split(/\r\n|\n|\r/);
 
-      linesOfCode.forEach((item) => {
-        const line = item.trim().split('');
-        line.forEach(char => notes.push(notesMap(char.charCodeAt(0))));
-        notes.push(null);
+        linesOfCode.forEach((line) => {
+          line.trim().split('').forEach((char) => {
+            this.notes.push(notesMap(char.charCodeAt(0)));
+            this.charsToPlay.push(char);
+          });
+
+          this.notes.push(notesMap(32));
+          this.charsToPlay.push(null);
+        });
+        resolve();
       });
-
+    },
+    playMusic(notes, charsToPlay) {
       const synthPart = new Tone.Sequence(((time, note) => {
-        this.realTimeNotes += ` ${note}`;
+        const charToPlay = charsToPlay.shift();
+
+        charToPlay ? this.realTimeChar[this.realTimeChar.length - 1] += charToPlay : this.realTimeChar.push('');
+        this.realTimeChar = [...this.realTimeChar];
         synth.triggerAttackRelease(note, time);
       }), notes, '8n');
 
       synthPart.loop = 0;
       synthPart.start();
       Tone.Transport.start();
+    },
+    onStartOverClick() {
+      this.isPlaying = false;
+      Tone.Transport.stop();
     },
   },
 };
