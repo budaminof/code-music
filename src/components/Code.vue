@@ -2,7 +2,6 @@
 <template>
   <div>
     <textarea v-model="code" v-if="!isPlaying"/>
-    {{test}}
     <div v-if="isPlaying" class="music-wrapper">
       <div class="real-time-notes">
         <div v-for="(line, index) in realTimeChar" :key="index">{{line}}</div>
@@ -26,7 +25,7 @@ const synth = new Tone.MembraneSynth().toMaster();
 let synthPart;
 let notes = [];
 let charsToPlay = [];
-const sampleCode = `ReactDOM.render(
+const sampleCode = `R  eactDOM.render(
   <h1> {♪} Hello world! </h1>,
   document.getElementById('root')
 );`;
@@ -63,8 +62,17 @@ export default {
     },
     playMusic() {
       synthPart = new Tone.Sequence(((time, note) => {
-        const charToPlay = charsToPlay.shift();
-        charToPlay ? this.realTimeChar[this.realTimeChar.length - 1] += charToPlay : this.realTimeChar.push('');
+        let charToPlay = charsToPlay.shift();
+        while (!charToPlay || charToPlay === ' ') {
+          if (charToPlay === ' ') {
+            this.realTimeChar[this.realTimeChar.length - 1] += charToPlay;
+          } else {
+            this.realTimeChar.push('');
+          }
+          charToPlay = charsToPlay.shift();
+        }
+
+        this.realTimeChar[this.realTimeChar.length - 1] += charToPlay;
         this.realTimeChar = [...this.realTimeChar];
         synth.triggerAttackRelease(note, time);
       }), notes, '8n');
