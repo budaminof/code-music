@@ -1,14 +1,17 @@
+
 <template>
   <div>
     <textarea v-model="code" v-if="!isPlaying"/>
-
-    <div v-if="isPlaying">
-      <div class="real-time-notes" v-for="(line, index) in realTimeChar" :key="index">{{line}}</div>
+    {{test}}
+    <div v-if="isPlaying" class="music-wrapper">
+      <div class="real-time-notes">
+        <div v-for="(line, index) in realTimeChar" :key="index">{{line}}</div>
+      </div>
       <button @click="onStartOverClick">start over</button>
     </div>
 
     <div class="convert-button-wrapper">
-      <button @click="onPlayClick" v-if="!isPlaying">make music</button>
+      <button @click="onPlayClick" v-if="!isPlaying">{♪} make music</button>
     </div>
   </div>
 </template>
@@ -20,8 +23,11 @@ import Tone from 'tone';
 import notesMap from '../utility/notesMap';
 
 const synth = new Tone.MembraneSynth().toMaster();
+let synthPart;
+let notes = [];
+let charsToPlay = [];
 const sampleCode = `ReactDOM.render(
-  <h1>Hello world!</h1>,
+  <h1> {♪} Hello world! </h1>,
   document.getElementById('root')
 );`;
 
@@ -31,15 +37,13 @@ export default {
       code: sampleCode,
       isPlaying: false,
       realTimeChar: [''],
-      notes: [],
-      charsToPlay: [],
     };
   },
   methods: {
     async onPlayClick() {
       this.isPlaying = true;
       await this.convertCode();
-      this.playMusic(this.notes, this.charsToPlay);
+      this.playMusic();
     },
     convertCode() {
       return new Promise((resolve) => {
@@ -47,20 +51,19 @@ export default {
 
         linesOfCode.forEach((line) => {
           line.trim().split('').forEach((char) => {
-            this.notes.push(notesMap(char.charCodeAt(0)));
-            this.charsToPlay.push(char);
+            notes.push(notesMap(char.charCodeAt(0)));
+            charsToPlay.push(char);
           });
 
-          this.notes.push(notesMap(32));
-          this.charsToPlay.push(null);
+          notes.push(notesMap(32));
+          charsToPlay.push(null);
         });
         resolve();
       });
     },
-    playMusic(notes, charsToPlay) {
-      const synthPart = new Tone.Sequence(((time, note) => {
+    playMusic() {
+      synthPart = new Tone.Sequence(((time, note) => {
         const charToPlay = charsToPlay.shift();
-
         charToPlay ? this.realTimeChar[this.realTimeChar.length - 1] += charToPlay : this.realTimeChar.push('');
         this.realTimeChar = [...this.realTimeChar];
         synth.triggerAttackRelease(note, time);
@@ -73,6 +76,13 @@ export default {
     onStartOverClick() {
       this.isPlaying = false;
       Tone.Transport.stop();
+      this.reset();
+    },
+    reset() {
+      this.realTimeChar = [''];
+      notes = [];
+      charsToPlay = [];
+      synthPart.dispose();
     },
   },
 };
@@ -81,12 +91,14 @@ export default {
 <style scoped lang="scss">
 textarea {
   width: 70vw;
-  height: 50vh;
+  height: 70vh;
   outline: none;
+  border-radius: 2px;
+  border: 1px solid rgb(21, 21, 21);
 }
 
 button {
-  margin: 0 auto;
+  margin: 20px 0 0 0;
   text-transform: uppercase;
   padding: 20px 45px;
   border-radius: 4px;
@@ -103,10 +115,15 @@ button {
   text-align: center;
 }
 
-.real-time-notes {
-  max-width: 70vw;
-  white-space: pre-wrap;
-  text-align: center;
-  margin: 0 auto;
+.music-wrapper {
+  height: 90vh;
+  .real-time-notes {
+    max-width: 70vw;
+    white-space: pre-wrap;
+    text-align: left;
+    margin: 0 auto;
+    height: 70vh;
+    overflow: auto;
+  }
 }
 </style>
