@@ -33,13 +33,14 @@ const sampleCode = `ReactDOM.render(
 export default {
   data() {
     return {
-      code: sampleCode,
+      code: this.$route.query.data || sampleCode,
       isPlaying: false,
       realTimeChar: [''],
     };
   },
   methods: {
     async onPlayClick() {
+      this.$router.push({ query: { data: this.code } });
       this.isPlaying = true;
       await this.convertCode();
       this.playMusic();

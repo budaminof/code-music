@@ -1,20 +1,9 @@
 <template>
   <div id="app">
     <h1>Code () => Music</h1>
-    <Code/>
+    <router-view/>
   </div>
 </template>
-
-<script>
-import Code from './components/Code.vue';
-
-export default {
-  name: 'app',
-  components: {
-    Code,
-  },
-};
-</script>
 
 <style lang="scss">
 body {
