@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import App from './App.vue';
-import Code from './components/Code.vue';
+import CodeToMusic from './components/CodeToMusic.vue';
 
 Vue.config.productionTip = false;
 
@@ -11,8 +11,8 @@ const router = new VueRouter({
   routes: [
     {
       path: '*',
-      name: 'code-component',
-      component: Code,
+      name: 'code-to-music-component',
+      component: CodeToMusic,
     },
   ],
 });
