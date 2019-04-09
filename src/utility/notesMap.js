@@ -3,40 +3,40 @@ const notesMap = (charCode) => {
     return null;
   }
   const octave = (charCode % 5) + 1;
-  if (charCode < 11) {
+  if (charCode < 41) {
     return `C${octave}`;
   }
-  if (charCode < 22) {
+  if (charCode < 49) {
     return `C#${octave}`;
   }
-  if (charCode < 33) {
+  if (charCode < 57) {
     return `D${octave}`;
   }
-  if (charCode < 44) {
+  if (charCode < 65) {
     return `D#${octave}`;
   }
-  if (charCode < 55) {
+  if (charCode < 73) {
     return `E${octave}`;
   }
-  if (charCode < 66) {
+  if (charCode < 81) {
     return `F${octave}`;
   }
-  if (charCode < 77) {
+  if (charCode < 89) {
     return `F#${octave}`;
   }
-  if (charCode < 88) {
+  if (charCode < 97) {
     return `G${octave}`;
   }
-  if (charCode < 99) {
+  if (charCode < 105) {
     return `G#${octave}`;
   }
-  if (charCode < 110) {
+  if (charCode < 113) {
     return `A${octave}`;
   }
   if (charCode < 121) {
     return `A#${octave}`;
   }
-  if (charCode < 132) {
+  if (charCode < 255) {
     return `B${octave}`;
   }
   return null;
